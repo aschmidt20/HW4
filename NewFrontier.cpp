@@ -55,22 +55,26 @@ int MinimumPeople(std::vector<std::vector<std::string>>undecided_people, std::ve
 int main() {
 	size_t n, k;
 	std::cin >> n >> k;
-	std::vector<std::string> skills_needed(k);
+	std::vector<std::string> skills_needed(0);
 	for (size_t i = 0; i < k; i++) {
 		std::string temp = "";
 		std::cin >> temp;
-		skills_needed.push_back(temp);
+		if (temp != "") {
+			skills_needed.push_back(temp);
+		}
 	}
 
-	std::vector<std::vector<std::string>> people(n);
+	std::vector<std::vector<std::string>> people(0);
 	int num_skills = 0;
 	for (size_t j = 0; j < n; j++) {
 		std::cin >> num_skills;
-		std::vector<std::string>inner(num_skills);
+		std::vector<std::string>inner(0);
 		for (size_t k = 0; k < num_skills; k++) {
 			std::string temp = "";
 			std::cin >> temp;
-			inner.push_back(temp);
+			if (temp != "") {
+				inner.push_back(temp);
+			}
 		}
 		people.push_back(inner);
 
@@ -80,11 +84,11 @@ int main() {
 	size_t min_num = MinimumPeople(people, std::vector<std::vector<std::string>>(0), skills_needed);
 
 	std::cout << min_num;
-	//
-	//for (std::vector<std::string> person : best_people) {
-	//	for (auto skill : person) {
-	//		std::cout << skill << std::endl;
-	//	}
-	//	std::cout << std::endl;
-	//}
+
+	for (std::vector<std::string> person : best_people) {
+		for (auto skill : person) {
+			std::cout << skill << std::endl;
+		}
+		std::cout << std::endl;
+	}
 }
