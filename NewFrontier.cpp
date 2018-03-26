@@ -7,23 +7,31 @@
 #include <queue>
 #include <utility>
 #include <sstream>
+#include<map>
 
 
 std::vector<std::vector<std::string>> best_people = {};
 size_t min_people;
 
 
-int MinimumPeople(std::vector<std::vector<std::string>>undecided_people, std::vector<std::vector<std::string>> included_people, std::vector<std::string> skills) {
+int MinimumPeople(std::vector<std::vector<std::string>>undecided_people, std::vector<std::vector<std::string>> included_people, std::vector<std::string> skills, std::map<std::string,int>undecided_left) {
 
-	if (included_people.size() > min_people) {
+	if (included_people.size() >= min_people) {
 		return min_people;
+	}
+	for (auto skill : undecided_left) {
+		if (skill.second == 0) {
+			for (auto skill_inner : skills) {
+				if (skill.first == skill_inner) {
+					return min_people;
+				}
+			}
+		}
 	}
 	if (undecided_people.size() == 0) {
 		if (skills.size() == 0) {
-			if (included_people.size() < min_people) {
 				min_people = included_people.size();
 				best_people = included_people;
-			}
 		}
 		return min_people;
 	}
@@ -31,8 +39,14 @@ int MinimumPeople(std::vector<std::vector<std::string>>undecided_people, std::ve
 	std::vector<std::string> current_person = undecided_people.back();
 	undecided_people.pop_back();
 
+
+	for (auto skill : current_person) {
+		undecided_left[skill] -= 1;
+	}
+
+
 	///Compute with exclude
-	size_t min1 = MinimumPeople(undecided_people, included_people, skills);
+	size_t min1 = MinimumPeople(undecided_people, included_people, skills, undecided_left);
 
 	included_people.push_back(current_person);
 	for (auto skill : current_person) {
@@ -45,7 +59,7 @@ int MinimumPeople(std::vector<std::vector<std::string>>undecided_people, std::ve
 		}
 	}
 	///Compute with include
-	size_t min2 = MinimumPeople(undecided_people, included_people, skills);
+	size_t min2 = MinimumPeople(undecided_people, included_people, skills, undecided_left);
 
 	return std::min(min1, min2);
 }
@@ -56,11 +70,13 @@ int main() {
 	size_t n, k;
 	std::cin >> n >> k;
 	std::vector<std::string> skills_needed(0);
+	std::map<std::string, int>undecided_left;
 	for (size_t i = 0; i < k; i++) {
 		std::string temp = "";
 		std::cin >> temp;
 		if (temp != "") {
 			skills_needed.push_back(temp);
+			undecided_left.insert(std::pair<std::string,int>(temp, 0));
 		}
 	}
 
@@ -74,6 +90,7 @@ int main() {
 			std::cin >> temp;
 			if (temp != "") {
 				inner.push_back(temp);
+				undecided_left[temp] += 1;
 			}
 		}
 		people.push_back(inner);
@@ -81,14 +98,15 @@ int main() {
 	}
 
 	min_people = sizeof(people);
-	size_t min_num = MinimumPeople(people, std::vector<std::vector<std::string>>(0), skills_needed);
+	size_t min_num = MinimumPeople(people, std::vector<std::vector<std::string>>(0), skills_needed, undecided_left);
 
 	std::cout << min_num;
 
-	for (std::vector<std::string> person : best_people) {
-		for (auto skill : person) {
-			std::cout << skill << std::endl;
-		}
-		std::cout << std::endl;
-	}
+//	for (std::vector<std::string> person : best_people) {
+//		for (auto skill : person) {
+//
+//			std::cout << skill << std::endl;
+//		}
+//		std::cout << std::endl;
+//	}
 }
