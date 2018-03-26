@@ -15,10 +15,15 @@ size_t min_people;
 
 
 int MinimumPeople(std::vector<std::vector<std::string>>undecided_people, std::vector<std::vector<std::string>> included_people, std::vector<std::string> skills, std::map<std::string,int>undecided_left) {
-
+	//If current branch already has more than min_people, just return 
 	if (included_people.size() >= min_people) {
 		return min_people;
 	}
+
+	bool already_found_next = false;
+	std::string skill_to_find = "";
+
+	//If there are no people left that have a needed skill, just return 
 	for (auto skill : undecided_left) {
 		if (skill.second == 0) {
 			for (auto skill_inner : skills) {
@@ -27,7 +32,14 @@ int MinimumPeople(std::vector<std::vector<std::string>>undecided_people, std::ve
 				}
 			}
 		}
+		//If there is only one person with a needed skill, we must include them
+		else if (skill.second == 1) {
+			already_found_next = true;
+			skill_to_find = skill.first;
+		}
 	}
+
+	//If we hit a result, we know that this result must be a new minimum
 	if (undecided_people.size() == 0) {
 		if (skills.size() == 0) {
 				min_people = included_people.size();
@@ -35,24 +47,38 @@ int MinimumPeople(std::vector<std::vector<std::string>>undecided_people, std::ve
 		}
 		return min_people;
 	}
+
+
 	int max_needed_skills = 0;
+	//This is the iterator pointing to the person which we will add next
 	std::vector<std::vector<std::string>>::iterator max_iter = undecided_people.begin();
+	
 	//Selects person with most needed skills
 	for (std::vector<std::vector<std::string>>::iterator it = undecided_people.begin(); it != undecided_people.end(); it++) {
 		//Finds all needed skills for undecided people and returns iterator pointing to max
 		int needed_skills = 0;
+		bool skill_found = false;
 		for (auto skill : skills) {
 			for (auto person_skill : *it) {
 				if (skill == person_skill) {
 					needed_skills += 1;
 				}
+				if (already_found_next) {
+					if (person_skill == skill_to_find) {
+						skill_found = true;
+					}
+				}
 			}
 		}
-		if (needed_skills > max_needed_skills) {
+		if (skill_found == true) {
+			max_iter = it;
+		}
+		else if (needed_skills > max_needed_skills && !already_found_next) {
 			max_needed_skills = needed_skills;
 			max_iter = it;
 		}
 	}
+
 
 
 
