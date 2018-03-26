@@ -35,9 +35,29 @@ int MinimumPeople(std::vector<std::vector<std::string>>undecided_people, std::ve
 		}
 		return min_people;
 	}
+	int max_needed_skills = 0;
+	std::vector<std::vector<std::string>>::iterator max_iter = undecided_people.begin();
+	//Selects person with most needed skills
+	for (std::vector<std::vector<std::string>>::iterator it = undecided_people.begin(); it != undecided_people.end(); it++) {
+		//Finds all needed skills for undecided people and returns iterator pointing to max
+		int needed_skills = 0;
+		for (auto skill : skills) {
+			for (auto person_skill : *it) {
+				if (skill == person_skill) {
+					needed_skills += 1;
+				}
+			}
+		}
+		if (needed_skills > max_needed_skills) {
+			max_needed_skills = needed_skills;
+			max_iter = it;
+		}
+	}
 
-	std::vector<std::string> current_person = undecided_people.back();
-	undecided_people.pop_back();
+
+
+	std::vector<std::string> current_person = *max_iter;
+	undecided_people.erase(max_iter);
 
 
 	for (auto skill : current_person) {
