@@ -14,7 +14,9 @@ std::vector<std::vector<std::string>> best_people = {};
 size_t min_people;
 
 
+
 int MinimumPeople(std::vector<std::vector<std::string>>undecided_people, std::vector<std::vector<std::string>> included_people, std::vector<std::string> skills, std::map<std::string,int>undecided_left) {
+	int mininum_more_people_needed = 0;
 	//If current branch already has more than min_people, just return 
 	if (included_people.size() >= min_people) {
 		return min_people;
@@ -79,8 +81,12 @@ int MinimumPeople(std::vector<std::vector<std::string>>undecided_people, std::ve
 		}
 	}
 
-
-
+	if (max_needed_skills != 0) {
+		mininum_more_people_needed = int(skills.size()) / int(max_needed_skills);
+		if (included_people.size() + mininum_more_people_needed >= min_people) {
+			return min_people;
+		}
+	}
 
 	std::vector<std::string> current_person = *max_iter;
 	undecided_people.erase(max_iter);
