@@ -15,7 +15,7 @@ size_t min_people;
 
 
 
-int MinimumPeople(std::vector<std::vector<std::string>>undecided_people, std::vector<std::vector<std::string>> included_people, std::vector<std::string> skills, std::map<std::string,int>undecided_left) {
+int MinimumPeople(std::vector<std::vector<std::string>>undecided_people, std::vector<std::vector<std::string>> included_people, std::vector<std::string> skills, std::map<std::string, int>undecided_left) {
 	int mininum_more_people_needed = 0;
 	//If current branch already has more than min_people, just return 
 	if (included_people.size() >= min_people) {
@@ -44,8 +44,8 @@ int MinimumPeople(std::vector<std::vector<std::string>>undecided_people, std::ve
 	//If we hit a result, we know that this result must be a new minimum
 	if (undecided_people.size() == 0) {
 		if (skills.size() == 0) {
-				min_people = included_people.size();
-				best_people = included_people;
+			min_people = included_people.size();
+			best_people = included_people;
 		}
 		return min_people;
 	}
@@ -54,7 +54,7 @@ int MinimumPeople(std::vector<std::vector<std::string>>undecided_people, std::ve
 	int max_needed_skills = 0;
 	//This is the iterator pointing to the person which we will add next
 	std::vector<std::vector<std::string>>::iterator max_iter = undecided_people.begin();
-	
+
 	//Selects person with most needed skills
 	for (std::vector<std::vector<std::string>>::iterator it = undecided_people.begin(); it != undecided_people.end(); it++) {
 		//Finds all needed skills for undecided people and returns iterator pointing to max
@@ -74,6 +74,7 @@ int MinimumPeople(std::vector<std::vector<std::string>>undecided_people, std::ve
 		}
 		if (skill_found == true) {
 			max_iter = it;
+			break;
 		}
 		else if (needed_skills > max_needed_skills && !already_found_next) {
 			max_needed_skills = needed_skills;
@@ -128,7 +129,7 @@ int main() {
 		std::cin >> temp;
 		if (temp != "") {
 			skills_needed.push_back(temp);
-			undecided_left.insert(std::pair<std::string,int>(temp, 0));
+			undecided_left.insert(std::pair<std::string, int>(temp, 0));
 		}
 	}
 
@@ -154,11 +155,11 @@ int main() {
 
 	std::cout << min_num;
 
-//	for (std::vector<std::string> person : best_people) {
-//		for (auto skill : person) {
-//
-//			std::cout << skill << std::endl;
-//		}
-//		std::cout << std::endl;
-//	}
+	//	for (std::vector<std::string> person : best_people) {
+	//		for (auto skill : person) {
+	//
+	//			std::cout << skill << std::endl;
+	//		}
+	//		std::cout << std::endl;
+	//	}
 }
