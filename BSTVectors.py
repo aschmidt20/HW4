@@ -1,6 +1,7 @@
 import time
 import random
 import matplotlib.pyplot as plt
+import bisect
 
 """
 BST CODE FOUND AT
@@ -208,41 +209,41 @@ class BinarySearchTree:
                                     currentNode.rightChild.rightChild)
 
 """
-We consider a python dictionary to be an efficient realization of the hash table data structure. 
+We consider a python list to be an equivalent to C++ vector
 Now to do some timings 
 """
 
 n_vals = [10 ** i for i in range(5)]
 bst_insert_elapsed = []  # the time it took for the binary tree to handle insertion of n elements
-ht_insert_elapsed = []  # the time it took for the hash table to handle insertion of n elements
+vector_insert_elapsed = []  # the time it took for the list to handle insertion of n elements
 iters = 10  # the number of times to repeat our experiment
 
 for n in n_vals:
-    hash_tab = {}
+    vector = []
     bst = BinarySearchTree()
     random_keys = [random.randint(-100, 100) for i in range(n)]
     random_vals = [random.randint(-100, 100) for i in range(n)]
 
-    # Hash Table Testing
+    # Time vector insertion
     start = time.clock()
-    # Repeat the experiment however many times
     for a in range(iters):
         for i in range(n):
-            hash_tab[random_keys[i]] = random_vals[i]
+            bisect.insort(vector, (random_keys[i], random_vals[i]))  # Just for consistency, we insert a pair
     end = time.clock()
     # Append the true time per trial
-    ht_insert_elapsed.append((end - start)/iters)
+    vector_insert_elapsed.append((end - start) / iters)
 
-    # BST Insertion Testing
+    # Time bst insertion
     start = time.clock()
     for a in range(iters):
         for i in range(n):
             bst.put(random_keys[i], random_vals[i])
     end = time.clock()
-    bst_insert_elapsed.append((end - start)/iters)
+    # Append the true time per trial
+    bst_insert_elapsed.append((end - start) / iters)
 
-plt.semilogx(n_vals, ht_insert_elapsed, label = 'Hash Table')
-plt.semilogx(n_vals, bst_insert_elapsed, label = 'BST')
+plt.plot(n_vals, vector_insert_elapsed, label = 'Vector')
+plt.plot(n_vals, bst_insert_elapsed, label = 'Balanced Binary Tree')
+plt.title("Vector Insertion vs Balanced Binary Tree Insertion ")
 plt.legend()
-plt.title("Hash Table vs Binary Search Tree Insertion")
 plt.show()
