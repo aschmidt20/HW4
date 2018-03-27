@@ -45,35 +45,37 @@ def quickSort(arr):
 
 quick_sort_times = []
 insertion_sort_times = []
-points = [1,5, 10, 20, 70, 100, 200, 300, 400, 450, 500, 600, 1000]
-for i in points:
-    random_array = []
-    random_array_copy = list(random_array)
+points = arange(1, 50, 5)
+iters = 1000
+for point in points:
+
+    # Time insertion sort
     start = time.clock()
-    for a in range(10):
-        for b in range(0, i):
-            random_array.append(random.randint(-100, 100))
+    for a in range(iters):
+        # We note the noise added by timing the creation of this array, but also argue that it is minimal
+        # and balanced since it is done in both trials.
+        random_array = [random.randint(-100, 100) for i in range(point)]
         insertionSort(random_array)
     end = time.clock()
-    time_insertion_sort = (end - start) / 10
+    time_insertion_sort = (end - start) / iters
+
+    # Time quick sort
     start = time.clock()
-    for c in range(10):
-        for d in range(0, i):
-            random_array.append(random.randint(-100, 100))
+    for c in range(iters):
+        random_array = [random.randint(-100, 100) for i in range(point)]
         quickSort(random_array)
     end = time.clock()
-    time_quick_sort = (end - start) / 10
+    time_quick_sort = (end - start) / iters
+
     insertion_sort_times.append(time_insertion_sort)
     quick_sort_times.append(time_quick_sort)
 
 plt.style.use('dark_background')
 plt.plot(points, insertion_sort_times, label='Insertion Sort')
 plt.plot(points, quick_sort_times, label='Quick Sort')
+# plt.plot(points, [insertion_sort_times[i] - quick_sort_times[i] for i in range(len(points))])
 plt.title("Effect Of Input Size On Insertion and Quick Sort Runtime")
 plt.xlabel("Input Size")
 plt.ylabel("Average Run Time (ms)")
 plt.legend()
 plt.show()
-
-print(quick_sort_times)
-print(insertion_sort_times)

@@ -45,11 +45,11 @@ def quickSort(arr):
 
 
 # Source: rosettacode.org
-def hybridSort(arr):
+def hybridSort(arr, cutoff):
     less = []
     pivotList = []
     more = []
-    if len(arr) <= 180:
+    if len(arr) <= cutoff:
         return insertionSort(arr)
     else:
         pivot = arr[0]
@@ -64,43 +64,48 @@ def hybridSort(arr):
         more = quickSort(more)
         return less + pivotList + more
 
+points = [1,10, 50, 100, 200, 400, 700, 1000]
+cutoffs = [5, 10, 20, 30, 50, 100, 200]
 quick_sort_times = []
 insertion_sort_times = []
-hybrid_sort_times = []
-points = [1,10,100,1000]
-for i in points:
-    random_array = []
-    random_array_copy = list(random_array)
+hybrid_sort_times = dict((cutoff, []) for cutoff in cutoffs)
+iters = 50
+for point in points:
+
+    # Time insertion sort on the inputs
     start = time.clock()
-    for a in range(10):
-        for b in range(0, i):
-            random_array.append(random.randint(-100, 100))
+    for a in range(iters):
+        random_array = [random.randint(-100, 100) for i in range(point)]
         insertionSort(random_array)
     end = time.clock()
-    time_insertion_sort = (end - start) / 10
+    time_insertion_sort = (end - start) / iters
+
+    # Time quick sort on the inputs
     start = time.clock()
-    for c in range(10):
-        for d in range(0, i):
-            random_array.append(random.randint(-100, 100))
+    for c in range(iters):
+        random_array = [random.randint(-100, 100) for i in range(point)]
         quickSort(random_array)
     end = time.clock()
-    time_quick_sort = (end - start) / 10
-    start = time.clock()
-    for e in range(10):
-        for f in range(0, i):
-            random_array.append(random.randint(-100, 100))
-        hybridSort(random_array)
-    end = time.clock()
-    time_hybrid_sort = (end - start) / 10
+    time_quick_sort = (end - start) / iters
+
+    for cutoff in cutoffs:
+        start = time.clock()
+        for e in range(iters):
+            random_array = [random.randint(-100, 100) for i in range(point)]
+            hybridSort(random_array, cutoff)
+        end = time.clock()
+        hybrid_sort_times[cutoff].append((end - start) / iters)
+
     insertion_sort_times.append(time_insertion_sort)
     quick_sort_times.append(time_quick_sort)
-    hybrid_sort_times.append(time_hybrid_sort)
 
 plt.style.use('dark_background')
-plt.plot(points, insertion_sort_times, label='Insertion Sort')
+# plt.plot(points, insertion_sort_times, label='Insertion Sort')
 plt.plot(points, quick_sort_times, label='Quick Sort')
-plt.plot(points, hybrid_sort_times, label='Hybrid Quick Sort')
-plt.title("Effect Of Input Size On Insertion, Quick Sort, and Hybrid Quick Sort Runtime With k = 180")
+for cutoff in cutoffs:
+    if all([quick_sort_times[i] - hybrid_sort_times[cutoff][i] for i in range(len(points))]) > 0:
+        plt.plot(points, hybrid_sort_times[cutoff], label = 'Hybrid Cutoff = ' + str(cutoff), ls = '--')
+plt.title("Insertion Sort, Merge Sort, Hybrid Performances")
 plt.xlabel("Input Size")
 plt.ylabel("Average Run Time (ms)")
 plt.legend()
