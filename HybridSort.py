@@ -64,21 +64,16 @@ def hybridSort(arr, cutoff):
         more = quickSort(more)
         return less + pivotList + more
 
-points = [1,10, 50, 100, 200, 400, 700, 1000]
-cutoffs = [5, 10, 20, 30, 50, 100, 200]
+points = [1, 10, 30, 40, 50, 70, 80, 100, 200, 300, 400, 600, 800, 1000, 1500, 2000, 2500, 3000, 4000, 6000, 10000,
+          20000, 30000]
+cutoffs = [5, 15, 20, 27, 35, 50, 100, 1000]
 quick_sort_times = []
 insertion_sort_times = []
 hybrid_sort_times = dict((cutoff, []) for cutoff in cutoffs)
-iters = 50
+iters = 30
 for point in points:
 
-    # Time insertion sort on the inputs
-    start = time.clock()
-    for a in range(iters):
-        random_array = [random.randint(-100, 100) for i in range(point)]
-        insertionSort(random_array)
-    end = time.clock()
-    time_insertion_sort = (end - start) / iters
+
 
     # Time quick sort on the inputs
     start = time.clock()
@@ -88,6 +83,7 @@ for point in points:
     end = time.clock()
     time_quick_sort = (end - start) / iters
 
+    # Time on every cutoff
     for cutoff in cutoffs:
         start = time.clock()
         for e in range(iters):
@@ -96,16 +92,46 @@ for point in points:
         end = time.clock()
         hybrid_sort_times[cutoff].append((end - start) / iters)
 
-    insertion_sort_times.append(time_insertion_sort)
+
     quick_sort_times.append(time_quick_sort)
 
+# Time insertion sort separately, it takes too long on the large inputs
+for point in points[0:5]:
+# Time insertion sort on the inputs
+    start = time.clock()
+    for a in range(iters):
+        random_array = [random.randint(-100, 100) for i in range(point)]
+        insertionSort(random_array)
+    end = time.clock()
+    time_insertion_sort = (end - start) / iters
+    insertion_sort_times.append(time_insertion_sort)
+
 plt.style.use('dark_background')
+f, ((ax1, ax2, ax3, ax4), (ax5, ax6, ax7, ax8)) = plt.subplots(2, 4, sharex='col', sharey='row')
+ax1.plot(points, quick_sort_times, points, hybrid_sort_times[cutoffs[0]])
+ax1.set_title("k = " + str(cutoffs[0]))
+ax2.plot(points, quick_sort_times, points, hybrid_sort_times[cutoffs[1]])
+ax2.set_title("k = " + str(cutoffs[1]))
+ax3.plot(points, quick_sort_times, points, hybrid_sort_times[cutoffs[2]])
+ax3.set_title("k = " + str(cutoffs[2]))
+ax4.plot(points, quick_sort_times, points, hybrid_sort_times[cutoffs[3]])
+ax4.set_title("k = " + str(cutoffs[3]))
+ax5.plot(points, quick_sort_times, points, hybrid_sort_times[cutoffs[4]])
+ax5.set_title("k = " + str(cutoffs[4]))
+ax6.plot(points, quick_sort_times, points, hybrid_sort_times[cutoffs[5]])
+ax6.set_title("k = " + str(cutoffs[5]))
+ax7.plot(points, quick_sort_times, points, hybrid_sort_times[cutoffs[6]])
+ax7.set_title("k = " + str(cutoffs[6]))
+ax8.plot(points, quick_sort_times, points, hybrid_sort_times[cutoffs[7]])
+ax8.set_title("k = " + str(cutoffs[7]))
+f.suptitle("Hybrid Sort (yellow) vs Quicksort, Varying Cutoff")
+
+
+plt.figure(2)
 # plt.plot(points, insertion_sort_times, label='Insertion Sort')
 plt.plot(points, quick_sort_times, label='Quick Sort')
-for cutoff in cutoffs:
-    if all([quick_sort_times[i] - hybrid_sort_times[cutoff][i] for i in range(len(points))]) > 0:
-        plt.plot(points, hybrid_sort_times[cutoff], label = 'Hybrid Cutoff = ' + str(cutoff), ls = '--')
-plt.title("Insertion Sort, Merge Sort, Hybrid Performances")
+plt.plot(points, hybrid_sort_times[27], label = 'Hybrid k = 27')
+plt.title("Insertion Sort, QuickSort, Best Hybrid")
 plt.xlabel("Input Size")
 plt.ylabel("Average Run Time (ms)")
 plt.legend()
